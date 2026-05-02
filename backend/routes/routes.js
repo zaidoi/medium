@@ -2,12 +2,22 @@ import express from "express";
 import { User, Post } from "../Db/model.js";
 import { blogMiddleware } from "../middlewares/middleware.js";
 import jwt from "jsonwebtoken";
+import { signupInput,signinInput } from "../../common/zod/zod.js";
+import { sign } from "crypto";
 
 const routes = express.Router();
 
 routes.post("/user/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
+
+    const result = signupInput.safeParse(req.body);
+
+    if(!result.success){
+      return res.status(400).json({
+        msg:"Enter valid Input"
+      })
+    }
 
     const userAlreadythere = await User.findOne({ email });
     if (userAlreadythere) {
@@ -37,6 +47,13 @@ routes.post("/user/signup", async (req, res) => {
 routes.post("/user/signin", async(req, res) => {
   try {
     const {email,password} = req.body;
+    const result = signinInput.safeParse(req.body);
+
+    if(!result.success){
+      return res.status(400).json({
+        msg:"Enter valid Input"
+      })
+    }
     const checkUser = await User.findOne({email})
     if(!checkUser){
         return res.status(400).json({

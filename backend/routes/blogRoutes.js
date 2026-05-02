@@ -1,5 +1,6 @@
 import express from "express";
 import { Post } from "../Db/model.js";
+import { createPostInput,updatePostInput } from "../../common/zod/zod.js";
 
 const routes = express.Router();
 
@@ -7,6 +8,14 @@ routes.post("/blog", async (req, res) => {
   try {
     const { title, content } = req.body;
     const userId = req.userId.id;
+
+    const result = createPostInput.safeParse(req.body);
+    
+        if(!result.success){
+          return res.status(400).json({
+            msg:"Enter valid Input"
+          })
+        }
 
     const post = await Post.create({
       title,
@@ -29,6 +38,14 @@ routes.put("/blog/:id", async (req, res) => {
     const { title, content } = req.body;
     const userId = req.userId.id;
     const postId = req.params.id;
+
+    const result = updatePostInput.safeParse(req.body);
+    
+        if(!result.success){
+          return res.status(400).json({
+            msg:"Enter valid Input"
+          })
+        }
 
     const post = await Post.findById(postId);
 

@@ -109,4 +109,4 @@ routes.get("/blog/:id", async (req, res) => {
   
 });
 
-export default routes;
+export  {routes};

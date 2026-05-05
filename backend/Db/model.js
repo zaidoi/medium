@@ -26,6 +26,7 @@ const postSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  username:String,
   user: { type: String, ref: "User" },
 });
 

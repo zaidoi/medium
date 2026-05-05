@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
+import cors from "cors"
 import { connectDB } from "./Db/db.js";
 import {routes as userRouter} from "./routes/userRoutes.js";
 import {routes as blogRouter} from "./routes/blogRoutes.js"
@@ -8,6 +9,7 @@ import { blogMiddleware } from "./middlewares/middleware.js";
 const app = express();
 
 connectDB();
+app.use(cors())
 app.use(express.json());
 
 app.use("/api/v1/user", userRouter);

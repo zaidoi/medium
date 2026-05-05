@@ -1,6 +1,7 @@
 import express from "express";
 import { Post } from "../Db/model.js";
-import { createPostInput,updatePostInput } from "../../common/zod/zod.js";
+import { createPostInput, updatePostInput } from "../../common/zod/zod.js";
+import { User } from "../Db/model.js";
 
 const routes = express.Router();
 
@@ -10,17 +11,18 @@ routes.post("/blog", async (req, res) => {
     const userId = req.userId.id;
 
     const result = createPostInput.safeParse(req.body);
-    
-        if(!result.success){
-          return res.status(400).json({
-            msg:"Enter valid Input"
-          })
-        }
 
+    if (!result.success) {
+      return res.status(400).json({
+        msg: "Enter valid Input",
+      });
+    }
+    const user = await User.findById(userId);
     const post = await Post.create({
       title,
       content,
       user: userId,
+      username: user.name,
     });
     res.status(200).json({
       msg: "Post Created Successfully",
@@ -40,12 +42,12 @@ routes.put("/blog/:id", async (req, res) => {
     const postId = req.params.id;
 
     const result = updatePostInput.safeParse(req.body);
-    
-        if(!result.success){
-          return res.status(400).json({
-            msg:"Enter valid Input"
-          })
-        }
+
+    if (!result.success) {
+      return res.status(400).json({
+        msg: "Enter valid Input",
+      });
+    }
 
     const post = await Post.findById(postId);
 
@@ -90,7 +92,7 @@ routes.get("/blog/bulk", async (req, res) => {
   try {
     const allPost = await Post.find({});
 
-    if (allPost.length === 0 ) {
+    if (allPost.length === 0) {
       return res.status(404).json({
         msg: "No Post founded",
       });
@@ -123,7 +125,6 @@ routes.get("/blog/:id", async (req, res) => {
       error: error.message,
     });
   }
-  
 });
 
-export  {routes};
+export { routes };

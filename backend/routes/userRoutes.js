@@ -28,7 +28,7 @@ routes.post("/signup", async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: "Server Error",
+      msg: "Server Error",
       error: error.message,
     });
   }
